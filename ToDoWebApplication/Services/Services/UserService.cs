@@ -50,8 +50,8 @@ namespace ToDoWebApplication.Services.Services
 
         public async ValueTask<IEnumerable<UserForViewDTO>> GetAllAsync(Expression<Func<User, bool>> expression = null)      
         {
-            var users = await userRepository.GetAllAsync(expression: expression, isTracking: false, include: 
-                p => p.Include(x => x.Tasks).ThenInclude(c => c.Categories)
+            var users = await userRepository.GetAllAsync(expression: expression, isTracking: false, include: p => p
+                .Include(x => x.Tasks).ThenInclude(c => c.Categories)
                 .Include(x => x.Tasks).ThenInclude(f => f.AddFiles)
                 .Include(x => x.Tasks).ThenInclude(d => d.AddDueDates)
                 .Include(x => x.Tasks).ThenInclude(r => r.RepeatTimes)).ToListAsync();
@@ -64,7 +64,11 @@ namespace ToDoWebApplication.Services.Services
    
         public async ValueTask<UserForViewDTO> GetAsync(Expression<Func<User, bool>> expression)
         {
-            var user = await userRepository.GetAsync(expression, include: p => p.Include(x => x.Tasks));
+            var user = await userRepository.GetAsync(expression,include: p => p
+                .Include(x => x.Tasks).ThenInclude(c => c.Categories)
+                .Include(x => x.Tasks).ThenInclude(f => f.AddFiles)
+                .Include(x => x.Tasks).ThenInclude(d => d.AddDueDates)
+                .Include(x => x.Tasks).ThenInclude(r => r.RepeatTimes));
 
             if (user == null)
                 throw new ToDoException(404, "User Not fount");

@@ -49,8 +49,8 @@ namespace ToDoWebApplication.Services.Services
 
         public async ValueTask<IEnumerable<TaskBaseForViewDTO>> GetAllAsync(Expression<Func<TaskBase, bool>> expression = null)
         {
-            var tasks = await taskRepository.GetAllAsync(expression: expression, isTracking: false,
-                 include: p => p.Include(c => c.Categories)
+            var tasks = await taskRepository.GetAllAsync(expression: expression, isTracking: false,include: p => p
+                                .Include(c => c.Categories)
                                 .Include(f => f.AddFiles)
                                 .Include(d => d.AddDueDates)
                                 .Include(r => r.RepeatTimes)).ToListAsync();
@@ -63,7 +63,11 @@ namespace ToDoWebApplication.Services.Services
 
         public async ValueTask<TaskBaseForViewDTO> GetAsync(Expression<Func<TaskBase, bool>> expression)
         {
-            var task = await taskRepository.GetAsync(expression);
+            var task = await taskRepository.GetAsync(expression,
+                          include: p => p.Include(c => c.Categories)
+                         .Include(f => f.AddFiles)
+                         .Include(d => d.AddDueDates)
+                         .Include(r => r.RepeatTimes));
 
             if (task == null)
                 throw new ToDoException(404, "Task Not fount");
